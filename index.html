@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classic Product Showcase</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Georgia', serif;
+      background: #eaeaea;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      padding: 20px;
+      background-color: #fff;
+      margin: 0;
+      font-size: 32px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 80%;
+      margin: 20px auto;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+      transition: background-color 0.3s ease;
+    }
+
+    th {
+      background-color: #f5f5f5;
+    }
+
+    /* Animation for product hover */
+    tr:hover {
+      background-color: #f9e6da;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+    }
+
+    /* Animation for cell hover */
+    td:hover {
+      background-color: #42cef1;
+      transition: background-color 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Featured Products</h1>
+
+  <table id="productTable">
+    <tr>
+      <th>Title</th>
+      <th>Price</th>
+      <th>Popularity</th>
+    </tr>
+  </table>
+
+  <script>
+    // Fetch JSON data from the API
+    fetch('https://s3.amazonaws.com/open-to-cors/assignment.json')
+      .then(response => response.json())
+      .then(data => {
+        // Extract product data
+        const products = data.products;
+
+        // Convert the products object into an array
+        const productArray = Object.keys(products).map(key => ({
+          id: key,
+          ...products[key]
+        }));
+
+        // Sort the array based on descending popularity
+        productArray.sort((a, b) => b.popularity - a.popularity);
+
+        // Display the data in the table
+        const table = document.getElementById('productTable');
+        const tbody = table.createTBody();
+
+        productArray.forEach(product => {
+          const row = tbody.insertRow();
+          const titleCell = row.insertCell(0);
+          const priceCell = row.insertCell(1);
+          const popularityCell = row.insertCell(2);
+
+          titleCell.textContent = product.title;
+          priceCell.textContent = `$${product.price}`;
+          popularityCell.textContent = product.popularity;
+        });
+      })
+      .catch(error => console.error('Error fetching data:', error));
+  </script>
+
+</body>
+</html>
